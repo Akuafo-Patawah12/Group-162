@@ -1,0 +1,44 @@
+import { Request, Response } from 'express';
+import Product from '../Models/ProductSchema'; // Make sure the path is correct
+
+// GET /products?search=...
+export const getProducts = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const search = req.query.search?.toString() || '';
+    const products = await Product.find({
+      name: { $regex: search, $options: 'i' }, // case-insensitive search
+    });
+
+    res.json(products);
+  } catch (error) {
+    console.error('Error retrieving products:', error);
+    res.status(500).json({ message: 'Error retrieving products' });
+  }
+};
+
+// POST /products
+export const createProduct = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { productId, name, price, rating, stockQuantity } = req.body;
+
+    const newProduct = new Product({
+      productId,
+      name,
+      price,
+      rating,
+      stockQuantity,
+    });
+
+    const savedProduct = await newProduct.save();
+    res.status(201).json(savedProduct);
+  } catch (error) {
+    console.error('Error creating product:', error);
+    res.status(500).json({ message: 'Error creating product' });
+  }
+};
