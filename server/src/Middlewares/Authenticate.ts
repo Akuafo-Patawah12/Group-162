@@ -6,14 +6,14 @@ interface AuthenticatedRequest extends Request {
 }
 
 export const isAuthenticated = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  const token = req.cookies?.token || req.header('Authorization')?.replace('Bearer ', '');
+  const token = req.cookies?.refreshtoken || req.header('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
     return res.status(401).json({ message: 'Access denied. No token provided.' });
   }
 
   try {
-    const secret = process.env.JWT_SECRET as string;
+    const secret = process.env.REFRESH_TOKEN_SECRET as string;
     const decoded = jwt.verify(token, secret);
     req.user = decoded;
     next();

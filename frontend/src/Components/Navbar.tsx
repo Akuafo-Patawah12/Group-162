@@ -22,7 +22,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="flex justify-between items-center w-full mb-7">
+    <div style={{marginBlock:"20px"}} className="flex justify-between items-center w-full mb-7">
       {/* LEFT SIDE */}
       <div className="flex justify-between items-center gap-5">
         <button
@@ -70,7 +70,7 @@ const Navbar = () => {
               alt="Profile"
               width={50}
               height={50}
-              className="rounded-full overflow-hidden object-cover"
+              className="rounded-full size-10 overflow-hidden object-cover"
             />
             <span className="font-semibold">Group 162</span>
           </div>

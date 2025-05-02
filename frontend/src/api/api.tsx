@@ -32,6 +32,7 @@ export interface LoginResponse {
 }
 
 export interface SignUpRequest {
+  name: string;
   email: string;
   password: string;
 }
@@ -88,7 +89,7 @@ export interface User {
 }
 
 export const api = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_PUBLIC_API_BASE_URL  }),
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_PUBLIC_API_BASE_URL,credentials: 'include',}),
   reducerPath: "api",
   tagTypes: ["DashboardMetrics", "Products", "Users", "Expenses", "Login","SignUp"],
   endpoints: (build) => ({
@@ -116,10 +117,10 @@ export const api = createApi({
       providesTags: ["Users"],
     }),
     login: build.mutation<LoginResponse, LoginRequest>({
-      query: (data) => ({
+      query: (credentials) => ({
         url: "/auth/login",
         method: "POST",
-        body: data,
+        body: credentials,
       }),
       invalidatesTags: ["Login"],
     }),

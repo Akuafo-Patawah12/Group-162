@@ -1,9 +1,9 @@
-import { Router, Request, Response } from 'express';
-import { Product } from '../models/Product';
-import { Sale } from '../models/Sale';
+import { Request, Response } from 'express';
+import  Product  from '../Models/ProductSchema';
+import  Sale  from '../Models/Sales';
 import { Types } from 'mongoose';
 
-const router = Router();
+
 
 interface OrderRequestBody {
   productId: string;
@@ -11,7 +11,7 @@ interface OrderRequestBody {
   quantity: number;
 }
 
-router.post('', async (req: Request<{}, {}, OrderRequestBody>, res: Response) => {
+const getCustomerOrder = async (req: Request<{}, {}, OrderRequestBody>, res: Response) => {
   const { productId, customerId, quantity } = req.body;
 
   if (!Types.ObjectId.isValid(productId) || !Types.ObjectId.isValid(customerId)) {
@@ -22,7 +22,7 @@ router.post('', async (req: Request<{}, {}, OrderRequestBody>, res: Response) =>
     const product = await Product.findById(productId);
     if (!product) return res.status(404).json({ error: 'Product not found' });
 
-    if (product.stock < quantity) {
+    if (product.stockQuantity < quantity) {
       return res.status(400).json({ error: 'Insufficient stock' });
     }
 
@@ -35,13 +35,13 @@ router.post('', async (req: Request<{}, {}, OrderRequestBody>, res: Response) =>
 
     await sale.save();
 
-    product.stock -= quantity;
+    product.stockQuantity -= quantity;
     await product.save();
 
     res.status(201).json({ message: 'Order placed successfully', sale });
   } catch (err) {
     res.status(500).json({ error: 'Server error', details: (err as Error).message });
   }
-});
+};
 
-export default ;
+export default getCustomerOrder;

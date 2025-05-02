@@ -1,6 +1,7 @@
 import express from 'express';
+import getCustomerOrder from '../controllers/customerController';
+import { isAuthenticated } from '../Middlewares/Authenticate';
+const router = express.Router()
 
-const router = express.router()
 
-
-router.post("/place-order", authController)
+router.post("/place-order",isAuthenticated, getCustomerOrder)
