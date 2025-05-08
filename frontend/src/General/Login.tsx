@@ -1,4 +1,4 @@
-"use client"
+
 import { useLoginMutation } from "../api/api";
 import { useState,FormEvent } from "react";
 import { useNavigate } from "react-router-dom";

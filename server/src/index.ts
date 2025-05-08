@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 
-// Or configure CORS:
+// configure CORS:
 app.use(
   cors({
     origin: "http://localhost:5173", // your frontend URL

@@ -1,6 +1,6 @@
 import { useGetDashboardMetricsQuery } from "../api/api";
 import { TrendingUp } from "lucide-react";
-import React, { useState } from "react";
+import  { useState } from "react";
 import {
   Bar,
   BarChart,
@@ -10,6 +10,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+
+import { useAppDispatch, useAppSelector } from "../redux";
+import { setIsReportPopUp } from "../types/state";
 
 const CardSalesSummary = () => {
   const { data, isLoading, isError } = useGetDashboardMetricsQuery();
@@ -39,7 +42,17 @@ const CardSalesSummary = () => {
 
   if (isError) {
     return <div className="m-5">Failed to fetch data</div>;
+
+
   }
+
+   const dispatch = useAppDispatch();
+          const isReportPopUp = useAppSelector(
+            (state) => state.global.isReportPopUp
+          );
+      const togglePopUp = () => {
+            dispatch(setIsReportPopUp(!isReportPopUp));
+          };
 
   return (
     <div className="row-span-3 xl:row-span-6 h-fit pb-4 bg-white shadow-md rounded-2xl flex flex-col justify-between">
@@ -73,6 +86,7 @@ const CardSalesSummary = () => {
                   {averageChangePercentage.toFixed(2)}%
                 </span>
               </div>
+              <button onClick={togglePopUp}>View reports</button>
               <select
                 className="shadow-sm border border-gray-300 bg-white p-2 rounded"
                 value={timeframe}

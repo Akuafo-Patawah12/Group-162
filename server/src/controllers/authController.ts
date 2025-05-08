@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import User from "../Models/UserSchema";
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 import dotenv from "dotenv";
 import { v4 } from "uuid";
 dotenv.config()

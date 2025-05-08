@@ -1,7 +1,16 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "compilerOptions": {
+    "strict": true,
+    "jsx": "react-jsx",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,          //  Helps avoid some third-party type issues
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src","src/custom.d.ts"]
 }
+// This is a TypeScript configuration file for a React project.
+// It specifies the compiler options and includes the source files in the "src" directory.
