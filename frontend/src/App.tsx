@@ -5,6 +5,7 @@ import './App.css'
 import General from './Layouts/General'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import UserLayout from './Layouts/UserLayout';
 
 function App() {
   
@@ -14,6 +15,7 @@ function App() {
       <Routes>
          <Route path="/*" element={<AdminLayout />} />
          <Route path="/auth/*" Component={General} />
+         <Route path="/u/*" element={<UserLayout />} />
        </Routes>
        <ToastContainer position="top-right" autoClose={3000} />
     </div>

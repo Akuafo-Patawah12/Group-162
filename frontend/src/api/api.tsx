@@ -82,6 +82,12 @@ export interface DashboardMetrics {
   expenseByCategorySummary: ExpenseByCategorySummary[];
 }
 
+export interface Me {
+  userId: string;
+  name: string;
+  email: string;
+}
+
 export interface User {
   userId: string;
   name: string;
@@ -91,7 +97,7 @@ export interface User {
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_PUBLIC_API_BASE_URL,credentials: 'include',}),
   reducerPath: "api",
-  tagTypes: ["DashboardMetrics", "Products", "Users", "Expenses", "Login","SignUp"],
+  tagTypes: ["DashboardMetrics", "Products", "Users", "Expenses", "Login","SignUp","Me"],
   endpoints: (build) => ({
     getDashboardMetrics: build.query<DashboardMetrics, void>({
       query: () => "/dashboard",
@@ -103,6 +109,10 @@ export const api = createApi({
         params: search ? { search } : {},
       }),
       providesTags: ["Products"],
+    }),
+    getLoggedInUser: build.query<Me, void>({
+      query: () => "/me",
+      providesTags: ["Me"],
     }),
     createProduct: build.mutation<Product, NewProduct>({
       query: (newProduct) => ({
@@ -146,6 +156,7 @@ export const {
   useGetProductsQuery,
   useCreateProductMutation,
   useGetUsersQuery,
+  useGetLoggedInUserQuery,
   useGetExpensesByCategoryQuery,
   useLoginMutation,
   useSignUpMutation
