@@ -13,6 +13,13 @@ import {
 
 import { useAppDispatch, useAppSelector } from "../redux";
 import { setIsReportPopUp } from "../types/state";
+const dispatch = useAppDispatch();
+          const isReportPopUp = useAppSelector(
+            (state) => state.global.isReportPopUp
+          );
+      const togglePopUp = () => {
+            dispatch(setIsReportPopUp(!isReportPopUp));
+          };
 
 const CardSalesSummary = () => {
   const { data, isLoading, isError } = useGetDashboardMetricsQuery();
@@ -34,9 +41,9 @@ const CardSalesSummary = () => {
 
   const highestValueDate = highestValueData.date
     ? new Date(highestValueData.date).toLocaleDateString("en-US", {
-        month: "numeric",
-        day: "numeric",
-        year: "2-digit",
+      day: "numeric",  
+      month: "numeric",
+      year: "2-digit",
       })
     : "N/A";
 
@@ -46,13 +53,7 @@ const CardSalesSummary = () => {
 
   }
 
-   const dispatch = useAppDispatch();
-          const isReportPopUp = useAppSelector(
-            (state) => state.global.isReportPopUp
-          );
-      const togglePopUp = () => {
-            dispatch(setIsReportPopUp(!isReportPopUp));
-          };
+   
 
   return (
     <div className="row-span-3 xl:row-span-6 h-fit pb-4 bg-white shadow-md rounded-2xl flex flex-col justify-between">

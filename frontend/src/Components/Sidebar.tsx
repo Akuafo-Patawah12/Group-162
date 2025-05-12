@@ -1,5 +1,8 @@
 import { useAppDispatch, useAppSelector } from "../redux";
 import { setIsSidebarCollapsed } from "../types/state";
+import axios from "axios"
+import {toast} from "react-toastify"
+import { useNavigate } from "react-router-dom"
 import {
   Archive,
   CircleDollarSign,
@@ -70,7 +73,19 @@ const Sidebar = () => {
   const sidebarClassNames = `fixed top-0 flex flex-col ${
     isSidebarCollapsed ? "w-0 md:w-16" : "w-72 md:w-64"
   } bg-white transition-all duration-300 overflow-hidden h-full shadow-md z-40`;
+  
 
+  
+  const router = useNavigate()
+   async function logout(){
+      try{
+         const res = await axios.get("http://localhost:8000/auth/logout")
+         toast.success(res.data.message)
+         router("/")
+      }catch(error){
+        console.log(error)
+      }
+   }
   return (
     <div className={sidebarClassNames}>
       {/* TOP LOGO */}
@@ -105,41 +120,47 @@ const Sidebar = () => {
       {/* LINKS */}
       <div className="flex-grow mt-8">
         <SidebarLink
-          href="/dashboard"
+          href="/protected/dashboard"
           icon={Layout}
           label="Dashboard"
           isCollapsed={isSidebarCollapsed}
         />
         <SidebarLink
-          href="/inventory"
+          href="/protected/inventory"
           icon={Archive}
           label="Inventory"
           isCollapsed={isSidebarCollapsed}
         />
         <SidebarLink
-          href="/products"
+          href="/protected/products"
           icon={Clipboard}
           label="Products"
           isCollapsed={isSidebarCollapsed}
         />
         <SidebarLink
-          href="/users"
+          href="/protected/users"
           icon={User}
           label="Users"
           isCollapsed={isSidebarCollapsed}
         />
         <SidebarLink
-          href="/settings"
+          href="/protected/settings"
           icon={SlidersHorizontal}
           label="Settings"
           isCollapsed={isSidebarCollapsed}
         />
         <SidebarLink
-          href="/expenses"
+          href="/protected/expenses"
           icon={CircleDollarSign}
           label="Expenses"
           isCollapsed={isSidebarCollapsed}
         />
+
+        <button
+          className="flex items-center !bg-red-400 rounded-2xl justify-start px-2 py-4 gap-3 text-gray-200 hover:text-blue-500 hover:transition-colors"
+          
+          onClick={logout}
+        >Logout</button>
       </div>
 
       {/* FOOTER */}

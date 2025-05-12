@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import User from "../Models/UserSchema";
 import bcrypt from "bcryptjs"
 import dotenv from "dotenv";
+import crypto from "crypto"
 import { v4 } from "uuid";
 dotenv.config()
 import { SignupRequest, SignupResponse } from "../types/signup.types"; // Adjust the import path as necessary
@@ -22,6 +23,15 @@ interface LoginResponse {
     name: string;
     email: string;
   };
+}
+
+type forgetPass_Req = {
+     email:string; 
+}
+
+
+interface logoutResponse {
+  message: string;
 }
 
 // Login Function
@@ -130,6 +140,84 @@ export const signUp = async (req:any, res:any) => {
         console.log(err)
     }
   };
+
+  const forgetPassaword = async (req: Request<{}, {}, forgetPass_Req>, res) => {
+    try{
+    const { email } = req.body;
+    console.log(email)
+    const user = await data.findOne({ email });
+  
+    if (!user) return res.status(404).json({ message: 'User not found' });
+  
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiry = Date.now() + 1000 * 60 * 60; // 1 hour
+  
+    user.passwordResetToken = token;
+    user.passwordResetExpiration = expiry;
+    await user.save();
+  
+    const resetLink = `http://localhost:3000/reset-password/${token}`;
+  
+    // Configure mailer
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD
+      }
+    });
+  
+    await transporter.sendMail({
+      to: email,
+      subject: 'Reset your password',
+      html: `<a href="${resetLink}">Click here to reset your password</a>`
+    });
+  
+    res.status(200).json({ message: 'Password reset email sent' });
+
+}catch(error){
+    res.status(500).json({message:"failed to send link for reset password"})
+}
+  };
+
+
+  const updatePassword= async(req,res)=>{
+        const { token } = req.params;
+        const { newPassword } = req.body;
+        try{
+      
+        const user = await data.findOne({
+          resetToken: token,
+          resetTokenExpiry: { $gt: Date.now() }, // ensure it's not expired
+        });
+      
+        if (!user) {
+          return res.status(400).json({ message: 'Invalid or expired token' });
+        }
+      
+        //  Update password and clear reset fields
+        user.password = await bcrypt.hash(newPassword, 10);
+        user.passwordResetToken = null;            
+        user.passwordResetExpiration = null;      
+        await user.save();
+      
+        res.json({ message: 'Password has been reset successfully' });
+    }catch(error){
+        console.log(error)
+        res.status(500).json({message:"failed to update password"})
+    }
+
+   }
+
+
+
+
+ export function logout (req:any,res: Response<logoutResponse>){
+       
+   
+        res.clearCookie("refreshToken");  // set the expiring time of the token to 1 second
+        res.status(200).json({message:"Success"})
+  }
 
 
 

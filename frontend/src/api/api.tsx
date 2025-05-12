@@ -23,7 +23,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token: string;
+  message: string;
   user: {
     id: string;
     name: string;
@@ -88,6 +88,10 @@ export interface Me {
   email: string;
 }
 
+export interface logoutMessage {
+  message: string;
+}
+
 export interface User {
   userId: string;
   name: string;
@@ -97,7 +101,7 @@ export interface User {
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_PUBLIC_API_BASE_URL,credentials: 'include',}),
   reducerPath: "api",
-  tagTypes: ["DashboardMetrics", "Products", "Users", "Expenses", "Login","SignUp","Me"],
+  tagTypes: ["DashboardMetrics", "Products", "Users", "Expenses", "Login","SignUp", "Logout","Me"],
   endpoints: (build) => ({
     getDashboardMetrics: build.query<DashboardMetrics, void>({
       query: () => "/dashboard",
@@ -143,6 +147,10 @@ export const api = createApi({
       }),
       invalidatesTags: ["SignUp"],
     }),
+    getLogoutMetrics: build.query<logoutMessage, void>({
+      query: () => "/auth/logout",
+      providesTags: ["Logout"],
+    }),
     
     getExpensesByCategory: build.query<ExpenseByCategorySummary[], void>({
       query: () => "/expenses",
@@ -153,6 +161,7 @@ export const api = createApi({
 
 export const {
   useGetDashboardMetricsQuery,
+  useGetLogoutMetricsQuery,
   useGetProductsQuery,
   useCreateProductMutation,
   useGetUsersQuery,

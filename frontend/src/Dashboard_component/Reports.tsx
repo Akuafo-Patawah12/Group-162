@@ -23,7 +23,7 @@ type Transaction = {
   productId: string;
   quantity: number;
   timestamp: string;
-  [key: string]: any; // Extend if needed
+  [key: string]: number; // Extend if needed
 };
 
 const ReportPopup: React.FC = () => {
@@ -58,7 +58,7 @@ const ReportPopup: React.FC = () => {
       });
 
       setTransactions(response.data.transactions);
-    } catch (err: any) {
+    } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
         setError(err.response.data.error || 'Server error');
       } else {

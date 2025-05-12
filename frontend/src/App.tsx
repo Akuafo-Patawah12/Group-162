@@ -13,8 +13,8 @@ function App() {
   return (
     <div>
       <Routes>
-         <Route path="/*" element={<AdminLayout />} />
-         <Route path="/auth/*" Component={General} />
+         <Route path="/protected/*" element={<AdminLayout />} />
+         <Route path="/*" Component={General} />
          <Route path="/u/*" element={<UserLayout />} />
        </Routes>
        <ToastContainer position="top-right" autoClose={3000} />

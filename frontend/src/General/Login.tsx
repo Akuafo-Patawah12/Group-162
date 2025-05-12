@@ -17,10 +17,15 @@ const Login = ()=>{
 
     try {
         const result = await login({ email, password, rememberMe }).unwrap();
-        const { token } = result; // Assuming the API returns a token and user object
-        localStorage.setItem("token", token); // Store the token in local storage
+        const { message,user } = result; // Assuming the API returns a token and user object
+        localStorage.setItem("name", user.name); // Store the token in local storage
         toast.success("Login successful!"); // Show success message
-        router("/dashboard"); // or wherever you want to redirect
+        if(message === "Admin login successful"){
+            router("/protected/dashboard"); // or wherever you want to redirect
+        }else{
+           router("/u/product")
+        }
+        
 
     } catch (err) {
       alert(err);

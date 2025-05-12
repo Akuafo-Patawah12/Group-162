@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShoppingCart, User } from 'lucide-react';
 
-import {  useGetLoggedInUserQuery} from "../api/api";
+
 
 
 interface CustomerHeaderProps {
@@ -11,28 +11,19 @@ interface CustomerHeaderProps {
 
 const CustomerHeader: React.FC<CustomerHeaderProps> = ({cartCount = 0 }) => {
 
-    const {
-          data: Me,
-          isLoading,
-          isError,
-        } = useGetLoggedInUserQuery();
+    const name = localStorage.getItem("name")
 
-        if (isLoading) {
-            return <div className="py-4">Loading...</div>;
-        }
-        if (isError) {
-            return <div className="py-4">Error loading user data</div>;
-        }
+    
   return (
-    <header className="bg-white shadow-md py-4 px-6 flex items-center justify-between rounded-b-2xl">
+    <header className="sticky top-0 z-3 bg-white shadow-md py-4 px-6 flex items-center justify-between rounded-b-2xl">
       <div className="text-xl font-bold text-gray-800">
-        <span className="text-blue-600">MyShop</span> Dashboard
+        <span className="text-blue-600">Group 162</span> Dashboard
       </div>
 
       <div className="flex items-center space-x-6">
-        <div className="hidden md:flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
           <User className="h-6 w-6 text-gray-600" />
-          <span className="text-gray-700 font-medium">Hello, {Me?.name}</span>
+          <span className="text-gray-700 font-medium">Hello, {name}</span>
         </div>
 
         <button className="relative group">
