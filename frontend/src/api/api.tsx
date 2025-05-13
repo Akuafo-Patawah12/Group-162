@@ -98,10 +98,16 @@ export interface User {
   email: string;
 }
 
+export interface UserSetting {
+  label: string;
+  value: string | boolean;
+  type: "text" | "toggle";
+}
+
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_PUBLIC_API_BASE_URL,credentials: 'include',}),
   reducerPath: "api",
-  tagTypes: ["DashboardMetrics", "Products", "Users", "Expenses", "Login","SignUp", "Logout","Me"],
+  tagTypes: ["DashboardMetrics", "Products", "Users", "Expenses", "Login","SignUp", "Logout","Me", "Settings"],
   endpoints: (build) => ({
     getDashboardMetrics: build.query<DashboardMetrics, void>({
       query: () => "/dashboard",
@@ -162,6 +168,19 @@ export const api = createApi({
       query: () => "/expenses",
       providesTags: ["Expenses"],
     }),
+
+    getSettings: build.query<UserSetting[], void>({
+      query: () => "/settings",
+      providesTags: ["Settings"],
+    }),
+    updateSetting: build.mutation<void, UserSetting>({
+      query: (setting) => ({
+        url: `/settings/${setting.label}`,
+        method: "PATCH",
+        body: setting,
+      }),
+      invalidatesTags: ["Settings"],
+    }),
   }),
 });
 
@@ -175,5 +194,7 @@ export const {
   useGetLoggedInUserQuery,
   useGetExpensesByCategoryQuery,
   useLoginMutation,
-  useSignUpMutation
+  useSignUpMutation,
+  useGetSettingsQuery,
+  useUpdateSettingMutation,
 } = api;

@@ -11,6 +11,7 @@ import productRoutes from "./routes/productRoutes";
 import userRoutes from "./routes/userRoutes";
 import expenseRoutes from "./routes/expenseRoutes"
 import authRoutes from "./routes/authRoutes";
+import settingsRoutes from "./routes/settingsRoutes";
 import connectDB from "./config/Db_connect";
 
 /* CONFIGURATIONS */
@@ -31,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   cors({
     origin: "http://localhost:5173", // your frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
@@ -43,6 +44,7 @@ app.use("/products", productRoutes); // http://localhost:8000/products
 app.use("/users", userRoutes); // http://localhost:8000/users
 app.use("/expenses", expenseRoutes); // http://localhost:8000/expenses
 app.use("/auth", authRoutes); // http://localhost:8000/auth
+app.use("/settings", settingsRoutes); // http://localhost:8000/settings
 /* SERVER */
 const port = Number(process.env.PORT) || 8000;
 
