@@ -3,6 +3,7 @@ import { Routes,Route } from 'react-router-dom'
 import Login from '../General/Login'
 import SignUp from '../General/SignUp'
 import {Warehouse} from "lucide-react"
+import ForgetPassword from '../General/ForgetPassword'
 
 const General = () => {
   return (
@@ -12,6 +13,7 @@ const General = () => {
           
             <Route path='/' element={<Login />} />
             <Route path='/signup' element={<SignUp />} />
+            <Route path='/forget_password' element={<ForgetPassword />} />
         </Routes>
     </div>
   )

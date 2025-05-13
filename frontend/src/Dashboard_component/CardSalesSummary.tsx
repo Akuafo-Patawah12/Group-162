@@ -10,9 +10,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-
-import { useAppDispatch, useAppSelector } from "../redux";
+  import { useAppDispatch, useAppSelector } from "../redux";
 import { setIsReportPopUp } from "../types/state";
+
+
+const CardSalesSummary = () => {
+
+
 const dispatch = useAppDispatch();
           const isReportPopUp = useAppSelector(
             (state) => state.global.isReportPopUp
@@ -21,7 +25,7 @@ const dispatch = useAppDispatch();
             dispatch(setIsReportPopUp(!isReportPopUp));
           };
 
-const CardSalesSummary = () => {
+
   const { data, isLoading, isError } = useGetDashboardMetricsQuery();
   const salesData = data?.salesSummary || [];
 

@@ -1,12 +1,11 @@
+// Products.tsx
 
-
-import { useCreateProductMutation, useGetProductsQuery } from "../api/api";
-import { PlusCircleIcon, SearchIcon } from "lucide-react";
-import { useState } from "react";
-import Header from "../Components/Header";
-import Rating from "../Components/Rating";
-import CreateProductModal from "../Components/CreateProductModal";
-
+import { useGetProductsQuery, useDeleteProductMutation,useCreateProductMutation } from '../api/api';
+import { PlusCircleIcon, SearchIcon, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import Header from '../Components/Header';
+import Rating from '../Components/Rating';
+import CreateProductModal from '../Components/CreateProductModal';
 
 type ProductFormData = {
   name: string;
@@ -16,20 +15,32 @@ type ProductFormData = {
 };
 
 const Products = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const {
-    data: products,
-    isLoading,
-    isError,
-  } = useGetProductsQuery(searchTerm);
+  // Fetch products and handle loading/error states
+  const { data: products, isLoading, isError } = useGetProductsQuery(searchTerm);
 
+  // Create product mutation
   const [createProduct] = useCreateProductMutation();
   const handleCreateProduct = async (productData: ProductFormData) => {
     await createProduct(productData);
   };
 
+  // Delete product mutation
+  const [deleteProduct] = useDeleteProductMutation();
+
+  // Handle product deletion
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      const response = await deleteProduct(productId).unwrap(); // unwrap to directly access the response
+      console.log('Product deleted successfully', response);
+    } catch (error) {
+      console.error('Failed to delete the product', error);
+    }
+  };
+
+  // Loading and error handling UI
   if (isLoading) {
     return <div className="py-4">Loading...</div>;
   }
@@ -71,32 +82,32 @@ const Products = () => {
 
       {/* BODY PRODUCTS LIST */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg-grid-cols-3 gap-10 justify-between">
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : (
-          products?.map((product) => (
-            <div
-              key={product.productId}
-              className="border border-stone-300 shadow rounded-md p-4 max-w-full w-full mx-auto"
-            >
-              <div className="flex flex-col items-center">
-                
-                <h3 className="text-lg text-gray-900 font-semibold">
-                  {product.name}
-                </h3>
-                <p className="text-gray-800">₵{product.price.toFixed(2)}</p>
-                <div className="text-sm text-gray-600 mt-1">
-                  Stock: {product.stockQuantity}
+        {products?.map((product) => (
+          <div
+            key={product.productId}
+            className="border border-stone-300 shadow rounded-md p-4 max-w-full w-full mx-auto"
+          >
+            <div className="flex flex-col items-center relative">
+              <h3 className="text-lg text-gray-900 font-semibold">{product.name}</h3>
+              <p className="text-gray-800">₵{product.price.toFixed(2)}</p>
+              <div className="text-sm text-gray-600 mt-1">Stock: {product.stockQuantity}</div>
+              {product.rating && (
+                <div className="flex items-center mt-2">
+                  <Rating rating={product.rating} />
                 </div>
-                {product.rating && (
-                  <div className="flex items-center mt-2">
-                    <Rating rating={product.rating} />
-                  </div>
-                )}
-              </div>
+              )}
+
+              {/* Delete Icon */}
+              <button
+                onClick={() => handleDeleteProduct(product.productId)}
+                className="absolute top-2 right-2 p-2 !bg-red-400 text-white rounded-full hover:!bg-red-600 transition"
+                aria-label="Delete Product"
+              >
+                <Trash2 size={15} />
+              </button>
             </div>
-          ))
-        )}
+          </div>
+        ))}
       </div>
 
       {/* MODAL */}

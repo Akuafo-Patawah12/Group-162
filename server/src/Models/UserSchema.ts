@@ -5,9 +5,9 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: string,
-  passwordResetToken: string,
-  passwordResetExpiration: Date,
+  role: string;
+  passwordResetToken?: string | null;
+  passwordResetExpiration?: Date | null;
 }
 
 const UserSchema: Schema = new Schema({

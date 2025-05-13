@@ -5,6 +5,7 @@ import User from "../Models/UserSchema";
 import bcrypt from "bcryptjs"
 import dotenv from "dotenv";
 import crypto from "crypto"
+import nodemailer from "nodemailer";
 import { v4 } from "uuid";
 dotenv.config()
 import { SignupRequest, SignupResponse } from "../types/signup.types"; // Adjust the import path as necessary
@@ -141,16 +142,16 @@ export const signUp = async (req:any, res:any) => {
     }
   };
 
-  const forgetPassaword = async (req: Request<{}, {}, forgetPass_Req>, res) => {
+  export const forgetPassaword = async (req: Request<{}, {}, forgetPass_Req>, res: Response) => {
     try{
     const { email } = req.body;
     console.log(email)
-    const user = await data.findOne({ email });
+    const user = await User.findOne({ email });
   
     if (!user) return res.status(404).json({ message: 'User not found' });
   
     const token = crypto.randomBytes(32).toString('hex');
-    const expiry = Date.now() + 1000 * 60 * 60; // 1 hour
+    const expiry = new Date(Date.now() + 1000 * 60 * 5); // 5 minutes
   
     user.passwordResetToken = token;
     user.passwordResetExpiration = expiry;
@@ -181,33 +182,33 @@ export const signUp = async (req:any, res:any) => {
   };
 
 
-  const updatePassword= async(req,res)=>{
-        const { token } = req.params;
-        const { newPassword } = req.body;
-        try{
-      
-        const user = await data.findOne({
-          resetToken: token,
-          resetTokenExpiry: { $gt: Date.now() }, // ensure it's not expired
-        });
-      
-        if (!user) {
-          return res.status(400).json({ message: 'Invalid or expired token' });
-        }
-      
-        //  Update password and clear reset fields
-        user.password = await bcrypt.hash(newPassword, 10);
-        user.passwordResetToken = null;            
-        user.passwordResetExpiration = null;      
-        await user.save();
-      
-        res.json({ message: 'Password has been reset successfully' });
-    }catch(error){
-        console.log(error)
-        res.status(500).json({message:"failed to update password"})
+  export const updatePassword = async (req: Request, res: Response): Promise<void> => {
+  const { token } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpiry: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      res.status(400).json({ message: 'Invalid or expired token' });
+      return;
     }
 
-   }
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.passwordResetToken = null;
+    user.passwordResetExpiration = null;
+
+    await user.save();
+
+    res.json({ message: 'Password has been reset successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to update password' });
+  }
+};
 
 
 

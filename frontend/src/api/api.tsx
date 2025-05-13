@@ -126,6 +126,12 @@ export const api = createApi({
       }),
       invalidatesTags: ["Products"],
     }),
+    deleteProduct: build.mutation({
+      query: (productId) => ({
+        url: `products/${productId}`,
+        method: 'DELETE',
+      }),
+    }),
     getUsers: build.query<User[], void>({
       query: () => "/users",
       providesTags: ["Users"],
@@ -164,6 +170,7 @@ export const {
   useGetLogoutMetricsQuery,
   useGetProductsQuery,
   useCreateProductMutation,
+  useDeleteProductMutation,
   useGetUsersQuery,
   useGetLoggedInUserQuery,
   useGetExpensesByCategoryQuery,

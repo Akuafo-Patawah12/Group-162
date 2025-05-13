@@ -1,7 +1,7 @@
 
 import { useLoginMutation } from "../api/api";
 import { useState,FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -57,8 +57,9 @@ const Login = ()=>{
           required
           className="w-full p-2 border rounded-md mb-6 focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
-
-        <div className="flex items-center mb-4">
+         
+         <section className="w-full  flex justify-between mb-4">
+        <div className="flex items-center">
           <input
             type="checkbox"
             checked={rememberMe}
@@ -67,6 +68,8 @@ const Login = ()=>{
           />
           <label className="text-sm font-semibold text-gray-700">Remember me</label>
           </div>
+          <Link to="/forget_password" className="text-sm text-purple-600 hover:underline">Forget Password?</Link>
+          </section>
 
         <button
           type="submit"
