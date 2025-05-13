@@ -9,25 +9,79 @@ interface AuthenticatedRequest extends Request {
   };
 }
 
+export interface UserSetting {
+  label: string;
+  value: string | boolean;
+  type: "text" | "toggle";
+}
+
+
+
+
 
 // GET /settings
-export const getUserSettings = async (req: AuthenticatedRequest, res: Response) => {
-    
+export const getUserSettings = async (
+  req: AuthenticatedRequest,
+  res: Response<UserSetting[] | { message: string }>
+) => {
   try {
+    const userId = req.user?.userId;
 
-    const userId = req.user?.userId; // safely access user ID
-     if (!req.user || !req.user.userId) {
-      return res.status(401).json({ message: 'Unauthorized' });
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const active_user = await User.findOne({userId : userId}).select('-password');
-    const userSettings = [
-  { label: "Username", value: active_user?.name, type: "text" },
-  { label: "Email", value: active_user?.email, type: "text" },
-  { label: "Password", value: true, type: "toggle" }, // toggle for example (e.g., 2FA enabled)
-];
-    res.status(200).json(userSettings);
+    const activeUser = await User.findById(userId).select("name email");
+
+    if (!activeUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userSettings: UserSetting[] = [
+      { label: "Username", value: activeUser.name, type: "text" },
+      { label: "Email", value: activeUser.email, type: "text" },
+      { label: "Password", value: true, type: "toggle" }, // This can be based on actual 2FA or similar logic
+    ];
+
+    return res.status(200).json(userSettings);
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch settings" });
+    console.error("Error fetching user settings:", error);
+    return res.status(500).json({ message: "Failed to fetch settings" });
+  }
+};
+
+
+
+export const updateUserSetting = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  const { label } = req.params;
+  const { value } = req.body;
+
+  if (!req.user || !req.user.userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const user = await User.findOne({ userId: req.user.userId });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update based on the label
+    if (label === "Username") {
+      user.name = value;
+    } else if (label === "Email") {
+      user.email = value;
+    } else {
+      return res.status(400).json({ message: "Invalid setting label" });
+    }
+
+    await user.save();
+
+    return res.status(200).json({ message: `${label} updated successfully` });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to update setting" });
   }
 };
