@@ -26,12 +26,13 @@ export const getUserSettings = async (
 ) => {
   try {
     const userId = req.user?.userId;
+    console.log("this user",userId)
 
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const activeUser = await User.findById(userId).select("name email");
+    const activeUser = await User.findOne({_id: userId}).select("name email");
 
     if (!activeUser) {
       return res.status(404).json({ message: "User not found" });

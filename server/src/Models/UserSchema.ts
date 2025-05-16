@@ -11,10 +11,10 @@ export interface IUser extends Document {
 }
 
 const UserSchema: Schema = new Schema({
-  userId: { type: String, required: true, unique: true },
+  _id: { type: String, required: true},
   name: { type: String, required: true },
-  email: { type: String, required: true },
-  password:{ type: String, required: true },
+  email: { type: String, default:"" },
+  password:{ type: String, default:"" },
   role: {type: String, enum: ['admin', 'user'], default: 'user'},
   passwordResetToken: {
         type: String,

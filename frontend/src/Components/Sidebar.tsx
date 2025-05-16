@@ -104,9 +104,9 @@ const Sidebar = () => {
         <h1
           className={`${
             isSidebarCollapsed ? "hidden" : "block"
-          } font-extrabold text-2xl`}
+          } font-bold text-lg`}
         >
-          GROUP 162 
+          SMB's 
         </h1>
 
         <button
@@ -157,7 +157,7 @@ const Sidebar = () => {
         />
 
         <button
-          className="flex items-center !bg-red-400 rounded-2xl justify-start px-2 py-4 gap-3 text-gray-200 hover:text-blue-500 hover:transition-colors"
+          className="flex items-center text-center justify-center w-full !bg-red-400 rounded-2xl  px-2 py-4 gap-3 text-gray-200 hover:text-blue-500 hover:transition-colors"
           
           onClick={logout}
         >Logout</button>

@@ -1,7 +1,10 @@
 import React, {  useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import {  useGetProductsQuery } from "./api/api";
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { LogOut } from 'lucide-react';
+import { toast } from 'react-toastify';
 import {
   Modal,
   Box,
@@ -12,20 +15,24 @@ import {
 import Rating from './Components/Rating';
 
 interface ProductItem {
-  _id: string;
+  productId: string;
   name: string;
   price: number;
   stockQuantity: boolean;
 }
 
 interface OrderItem {
-  _id: string;
-  name: string;
-  price: number;
+  ProductId: string;
+  customerId: string;
   quantity: number;
 }
 
-const ProductShow: React.FC = () => {
+
+interface countFunc {
+  fetchUnviewedOrders:()=> void;
+}
+
+const ProductShow: React.FC<countFunc> = ({fetchUnviewedOrders}) => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [orderSummary, setOrderSummary] = useState<OrderItem[]>([]);
@@ -40,12 +47,22 @@ const ProductShow: React.FC = () => {
     setShowQuantityModal(true);
   };
 
-  const confirmAddToOrder = () => {
-    if (selectedProduct) {
-      addToOrder({ ...selectedProduct, quantity });
+  axios.defaults.withCredentials = true;
+  const confirmAddToOrder = async() => {
+    try{
+     const response = await axios.post("http://localhost:8000/customer/place-order", {productId: selectedProduct, quantity}) 
+      if(response.status === 201){
+         toast.success("Product added to order");
+      fetchUnviewedOrders()
       setShowQuantityModal(false);
-    }
-  };
+      }
+    }catch(error){
+      console.error("Error adding to order:", error);
+    } 
+  }
+
+
+  
 
   const {
       data: products,
@@ -59,34 +76,11 @@ const ProductShow: React.FC = () => {
         return <div className="py-4">Loading...</div>;
     }
 
-  const addToOrder = (product: ProductItem) => {
-    const existingOrderItem = orderSummary.find((item) => item._id === product._id);
-    if (existingOrderItem) {
-      // If the product already exists in the order, increment the quantity
-      setOrderSummary(prev => prev.map(item =>
-        item._id === product._id
-          ? { ...item, stockQuantity: item.quantity + 1 }
-          : item
-      ));
-    } else {
-      // Add new product to the order
-      setOrderSummary(prev => [...prev, {
-        _id: product._id,
-        name: product.name,
-        price: product.price,
-        quantity: 1,
-      }]);
-    }
-  };
+ 
 
   const handlePlaceOrder = () => {
     // Logic to place order, like sending a POST request to backend
-    axios.post('/api/placeOrder', { order: orderSummary })
-      .then(response => {
-        console.log('Order placed successfully', response.data);
-        setOrderSummary([]); // Clear order summary
-      })
-      .catch(err => console.error('Error placing order', err));
+    
   };
   type paramData ={
     row:{
@@ -102,7 +96,7 @@ const ProductShow: React.FC = () => {
   const columns: GridColDef[] = [
     { field: 'productId', headerName: 'ID', width: 150 },
     { field: 'name', headerName: 'Product Name', flex: 1 },
-    { field: 'price', headerName: 'Price', width: 120, renderCell: (params: paramData) => `$${params.row.price}` },
+    { field: 'price', headerName: 'Price', width: 120, renderCell: (params: paramData) => `₵${params.row.price}` },
     {field:'stockQuantity',headerName: 'In Stock', width: 120,},
     {field:'rating',headerName: 'Rating', width: 120,renderCell: (params: paramData)=>(
     <div className='flex h-full items-center'>
@@ -116,7 +110,7 @@ const ProductShow: React.FC = () => {
   renderCell: (params: paramData) => (
     <div className="flex h-full items-center">
       <button
-        onClick={() => handleAddToOrderClick(params.row)}
+        onClick={() => handleAddToOrderClick(params.row.productId)}
         className="px-2 leading-3 h-[35px] !bg-blue-600 text-white rounded-xl"
       >
         Add to Order
@@ -159,7 +153,7 @@ const ProductShow: React.FC = () => {
             {orderSummary.map((item) => (
               <li key={item._id} className="flex justify-between mb-2">
                 <span>{item.name}</span>
-                <span>{item.quantity} x ${item.price.toFixed(2)}</span>
+                <span>{item.quantity} x ₵{item.price.toFixed(2)}</span>
               </li>
             ))}
           </ul>

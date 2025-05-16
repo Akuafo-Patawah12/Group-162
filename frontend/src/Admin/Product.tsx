@@ -6,6 +6,15 @@ import { useState } from 'react';
 import Header from '../Components/Header';
 import Rating from '../Components/Rating';
 import CreateProductModal from '../Components/CreateProductModal';
+import {toast} from "react-toastify"
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+} from '@mui/material';
 
 type ProductFormData = {
   name: string;
@@ -19,7 +28,7 @@ const Products = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch products and handle loading/error states
-  const { data: products, isLoading, isError } = useGetProductsQuery(searchTerm);
+  const { data: products, isLoading, isError,refetch } = useGetProductsQuery(searchTerm);
 
   // Create product mutation
   const [createProduct] = useCreateProductMutation();
@@ -31,10 +40,16 @@ const Products = () => {
   const [deleteProduct] = useDeleteProductMutation();
 
   // Handle product deletion
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+
   const handleDeleteProduct = async (productId: string) => {
+
     try {
       const response = await deleteProduct(productId).unwrap(); // unwrap to directly access the response
       console.log('Product deleted successfully', response);
+      toast.success("Item deleted")
+      refetch()
     } catch (error) {
       console.error('Failed to delete the product', error);
     }
@@ -98,17 +113,48 @@ const Products = () => {
               )}
 
               {/* Delete Icon */}
-              <button
-                onClick={() => handleDeleteProduct(product.productId)}
+                            <button
+                onClick={() => {
+                  setSelectedProductId(product.productId);
+                  setDeleteDialogOpen(true);
+                }}
                 className="absolute top-2 right-2 p-2 !bg-red-400 text-white rounded-full hover:!bg-red-600 transition"
                 aria-label="Delete Product"
               >
                 <Trash2 size={15} />
               </button>
+
             </div>
           </div>
         ))}
       </div>
+
+      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+          <DialogTitle>Confirm Deletion</DialogTitle>
+          <DialogContent>
+            <Typography>
+              Are you sure you want to delete this product? This action cannot be undone.
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (selectedProductId) {
+                  handleDeleteProduct(selectedProductId);
+                }
+                setDeleteDialogOpen(false);
+              }}
+              color="error"
+              variant="contained"
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+
 
       {/* MODAL */}
       <CreateProductModal

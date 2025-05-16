@@ -20,7 +20,7 @@ const SignUp = ()=>{
         await signUp({name,email,password }).unwrap();
         // Store the token in local storage
         toast.success("Sign up successful!"); // Show success message
-        router("/auth/login"); // or wherever you want to redirect
+        router("/"); // or wherever you want to redirect
 
     } catch (err) {
         toast.error("Sign up failed!"); // Show error message
@@ -69,7 +69,7 @@ const SignUp = ()=>{
         >
           Sign up
         </button>
-        <section className="flex justify-between my-3"><p>Already have an account?</p><a href="/auth/login">Login</a></section>
+        <section className="flex justify-between my-3"><p>Already have an account?</p><a href="/">Login</a></section>
       </form>
     </div>
   )

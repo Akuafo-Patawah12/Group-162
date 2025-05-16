@@ -12,6 +12,8 @@ import userRoutes from "./routes/userRoutes";
 import expenseRoutes from "./routes/expenseRoutes"
 import authRoutes from "./routes/authRoutes";
 import settingsRoutes from "./routes/settingsRoutes";
+import customerRoutes from "./routes/customerRoutes";
+import adminGeneralRoutes from "./routes/adminGeneralRoutes" 
 import connectDB from "./config/Db_connect";
 
 /* CONFIGURATIONS */
@@ -45,6 +47,8 @@ app.use("/users", userRoutes); // http://localhost:8000/users
 app.use("/expenses", expenseRoutes); // http://localhost:8000/expenses
 app.use("/auth", authRoutes); // http://localhost:8000/auth
 app.use("/settings", settingsRoutes); // http://localhost:8000/settings
+app.use("/customer", customerRoutes); // http://localhost:8000/customer
+app.use("/",adminGeneralRoutes) // http://localhost:8000
 /* SERVER */
 const port = Number(process.env.PORT) || 8000;
 

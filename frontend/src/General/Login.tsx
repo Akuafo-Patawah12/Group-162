@@ -28,7 +28,8 @@ const Login = ()=>{
         
 
     } catch (err) {
-      alert(err);
+      console.log(err)
+      toast.error("Invalid crediatials")
     }
   };
 
@@ -77,7 +78,7 @@ const Login = ()=>{
         >
           Login
         </button>
-        <section className="flex justify-between my-3"><p>Don't have an account?</p><a href="/auth/signup">Sign up</a></section>
+        <section className="flex justify-between my-3"><p>Don't have an account?</p><a href="/signup">Sign up</a></section>
       </form>
     </div>
   )
