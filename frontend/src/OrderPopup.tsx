@@ -39,7 +39,7 @@ const OrderPopup: React.FC<ProductPopupProps> = ({ open, onClose, product }) => 
     Product Details
   </DialogTitle>
   <Divider />
-  <DialogContent dividers style={{ fontSize: '1.1rem' }}>
+  <DialogContent dividers style={{ fontSize: '3.1rem' }}>
     {product.map((item, index) => (
       <Box
         key={index}
